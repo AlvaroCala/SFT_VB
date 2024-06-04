@@ -1,0 +1,972 @@
+Attribute VB_Name = "H_enviar"
+Sub enviar_mail()
+
+Dim nombre As String
+
+nombre = ActiveWorkbook.Name
+
+Application.ScreenUpdating = False
+Application.Calculation = xlCalculationManual
+Application.DisplayAlerts = False
+
+'Application.ScreenUpdating = True
+'Application.Calculation = xlCalculationAutomatic
+'Application.DisplayAlerts = True
+
+Dim hoja As String
+Dim hoja1 As String
+Dim hoja2 As String
+Dim hoja3 As String
+Dim hoja4 As String
+Dim hoja5 As String
+Dim hoja6 As String
+Dim hoja7 As String
+Dim hoja8 As String
+
+hoja = "IDN"
+hoja1 = "Variables"
+hoja2 = "Tablas"
+hoja3 = "Cálculos"
+hoja4 = "Comprobación"
+hoja5 = "Programa"
+hoja6 = "C.E"
+hoja7 = "Producción"
+hoja8 = "Configuración"
+
+'Call unprotej(hoja, hoja1, hoja2, hoja3, hoja4, hoja5, hoja6, hoja7)
+
+Dim dia1d As Date
+Dim dia1s As String
+Dim dia1db As Double
+'Dim año As Double
+
+Dim mercados As String
+Dim ruta As String
+
+Dim asunto As String
+Dim para(1 To 9) As String
+Dim cc(1 To 9) As String
+Dim cco(1 To 9) As String
+Dim texto As String
+Dim adjunto As String
+
+Dim usuario As String
+
+'Dim sesion As Object
+'Dim dbcorreo As Object
+
+Dim nombredbcorreo As String
+Dim correo As Object
+Dim adjuntar As Object
+Dim insertar As Object
+Dim guardar As Boolean
+Dim abierto As Integer
+
+Dim envi(7) As Integer
+Dim fil_ini(7) As Integer
+Dim zini(7) As Integer
+
+Dim idn_m(7, 24) As Variant
+Dim pe_bruta_m(7, 24) As Variant
+Dim pe_bruta_sol_m(7, 24) As Variant
+Dim pt_gnl_m(7, 24) As Variant
+Dim autocon_m(7, 24) As Variant
+Dim gen_net1_m(7, 24) As Variant
+Dim cor_man_m(7, 24) As Variant
+Dim gen_net2_m(7, 24) As Variant
+
+Dim idn(24) As Variant
+Dim pe_bruta(24) As Double
+Dim pe_bruta_sol(24) As Double
+Dim pt_gnl(24) As Double
+Dim autocon(24) As Variant
+Dim gen_net1(24) As Double
+Dim cor_man(24) As Double
+Dim gen_net2(24) As Double
+Dim arr_cald(4) As String
+Dim par_cald(4) As String
+Dim n_cald(4) As Double
+Dim uso_idn(2) As Double
+
+Dim pf_idn(24) As Variant
+Dim pf_pe_bruta(24) As Double
+Dim pf_pe_bruta_sol(24) As Double
+Dim pf_pt_gnl(24) As Double
+Dim pf_autocon(24) As Variant
+Dim pf_gen_net1(24) As Double
+Dim pf_cor_man(24) As Double
+Dim pf_gen_net2(24) As Double
+
+Dim incremental_idn(6, 24) As Variant
+Dim incremental_pe_bruta_sol(6, 24) As Variant
+Dim incremental_pt_gnl(6, 24) As Variant
+Dim incremental_pe_bruta(6, 24) As Variant
+Dim incremental_autocon(6, 24) As Variant
+Dim incremental_gen_net1(6, 24) As Variant
+Dim incremental_cor_man(6, 24) As Variant
+Dim incremental_gen_net2(6, 24) As Variant
+
+Dim texto_variable As String
+
+Dim fecha As String
+Dim fecha_s(3, 24) As String
+Dim program(3, 8, 24) As Variant
+Dim increm(3, 8, 24) As Variant
+Dim columna(3) As Integer
+
+Dim kfin As Integer
+
+Dim s_plataforma As String
+
+Dim verificador As Boolean
+
+
+dia1d = Application.Workbooks(nombre).Worksheets(hoja7).Range("A4").value
+dia1db = Application.Workbooks(nombre).Worksheets(hoja7).Range("A4").value
+dia1s = Application.Workbooks(nombre).Worksheets(hoja7).Range("A4").value
+
+dia2d = dia1d + 1 ' Application.Workbooks(nombre).Worksheets(hoja7).Range("C4").Value
+dia2db = dia1db + 1 'Application.Workbooks(nombre).Worksheets(hoja7).Range("C4").Value
+dia2s = CStr(dia2d) 'Application.Workbooks(nombre).Worksheets(hoja7).Range("C4").Value
+
+año = Year(dia1d)
+mes = Month(dia1d)
+dia = Day(dia1d)
+dia_s = CStr(dia)
+
+
+verificador = 0
+
+If planta_ribbon = "Solnova 1" Or planta_ribbon = "Solnova 3" Or planta_ribbon = "Solnova 4" Then
+    kfin = 2
+ElseIf planta_ribbon = "Solaben 3" Or planta_ribbon = "Solaben 2" Or planta_ribbon = "Solaben 1" Or planta_ribbon = "Solaben 6" Then
+    kfin = 3
+Else
+    kfin = 1
+End If
+    
+For K = 0 To kfin
+    If planta_ribbon = "Solnova 1" Or planta_ribbon = "Solnova 3" Or planta_ribbon = "Solnova 4" Then
+        Select Case K + 1
+        Case 1
+            planta = "Solnova 1"
+        Case 2
+            planta = "Solnova 3"
+        Case 3
+            planta = "Solnova 4"
+        End Select
+        
+    ElseIf planta_ribbon = "Solaben 3" Or planta_ribbon = "Solaben 2" Or planta_ribbon = "Solaben 1" Or planta_ribbon = "Solaben 6" Then
+        Select Case K + 1
+        Case 1
+            planta = "Solaben 3"
+        Case 2
+            planta = "Solaben 2"
+        Case 3
+            planta = "Solaben 1"
+        Case 4
+            planta = "Solaben 6"
+        End Select
+        
+    ElseIf planta_ribbon = "Helioenergy 1" Or planta_ribbon = "Helioenergy 2" Then
+        Select Case K + 1
+        Case 1
+            planta = "Helioenergy 1"
+        Case 2
+            planta = "Helioenergy 2"
+        End Select
+    ElseIf planta_ribbon = "Solacor 1" Or planta_ribbon = "Solacor 2" Then
+        Select Case K + 1
+        Case 1
+            planta = "Solacor 1"
+        Case 2
+            planta = "Solacor 2"
+        End Select
+    ElseIf planta_ribbon = "Helios 1" Or planta_ribbon = "Helios 2" Then
+        Select Case K + 1
+        Case 1
+            planta = "Helios 1"
+        Case 2
+            planta = "Helios 2"
+        End Select
+    ElseIf planta_ribbon = "PS10" Or planta_ribbon = "PS20" Then
+        Select Case K + 1
+        Case 1
+            planta = "PS10"
+        Case 2
+            planta = "PS20"
+        End Select
+    ElseIf planta_ribbon = "Termollano" Then
+        planta = "Termollano"
+    
+    End If
+    
+    Select Case planta
+'plataforma termosolar Solúcar
+    Case "Solnova 1"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("C5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("B57").value
+        c_ini = 3
+        c_ini2 = 4
+    Case "Solnova 3"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("N5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("M57").value
+        c_ini = 14
+        c_ini2 = 16
+    Case "Solnova 4"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("Y5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("X57").value
+        c_ini = 25
+        c_ini2 = 28
+'plataforma termosolar Écija
+    Case "Helioenergy 1"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("C5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("B57").value
+        c_ini = 3
+        c_ini2 = 4
+    Case "Helioenergy 2"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("N5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("M57").value
+        c_ini = 14
+        c_ini2 = 16
+'plataforma termosolar El Carpio
+    Case "Solacor 1"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("C5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("B57").value
+        c_ini = 3
+        c_ini2 = 4
+    Case "Solacor 2"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("N5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("M57").value
+        c_ini = 14
+        c_ini2 = 16
+'plataforma termosolar Ciudad Real
+    Case "Helios 1"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("C5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("B57").value
+        c_ini = 3
+        c_ini2 = 4
+    Case "Helios 2"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("N5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("M57").value
+        c_ini = 14
+        c_ini2 = 16
+'plataforma termosolar Logrosan
+    Case "Solaben 3"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("C5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("B57").value
+        c_ini = 3
+        c_ini2 = 4
+    Case "Solaben 2"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("N5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("M57").value
+        c_ini = 14
+        c_ini2 = 16
+    Case "Solaben 1"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("Y5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("X57").value
+        c_ini = 25
+        c_ini2 = 28
+    Case "Solaben 6"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("AJ5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("AI57").value
+        c_ini = 25
+        c_ini2 = 28
+'plataforma termosolar Torres
+    Case "PS10"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("C5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("B57").value
+        c_ini = 3
+        c_ini2 = 4
+    Case "PS20"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("N5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("M57").value
+        c_ini = 14
+        c_ini2 = 16
+    Case "Termollano"
+        mercados = Application.Workbooks(nombre).Worksheets(hoja4).Range("C5").value
+        comentario = Application.Workbooks(nombre).Worksheets(hoja4).Range("B57").value
+        c_ini = 3
+        c_ini2 = 4
+        
+    End Select
+
+    Select Case mes
+    Case 1
+        mes_n = "Enero"
+    Case 2
+        mes_n = "Febrero"
+    Case 3
+        mes_n = "Marzo"
+    Case 4
+        mes_n = "Abril"
+    Case 5
+        mes_n = "Mayo"
+    Case 6
+        mes_n = "Junio"
+    Case 7
+        mes_n = "Julio"
+    Case 8
+        mes_n = "Agosto"
+    Case 9
+        mes_n = "Septiembre"
+    Case 10
+        mes_n = "Octubre"
+    Case 11
+        mes_n = "Noviembre"
+    Case 12
+        mes_n = "Diciembre"
+    End Select
+
+    Application.Workbooks(nombre).Worksheets(hoja4).activate
+    
+    Application.DisplayAlerts = False
+
+    file = planta & "_" & mes & año & ".xls"
+    ruta = "\" & año & "\" & mes_n & "\"
+    ruta_r = ruta & file '& ".xlsm"
+
+    Workbooks.Open Filename:=ThisWorkbook.path & ruta_r, UpdateLinks:=False
+
+    Application.Workbooks(file).Worksheets(dia_s).activate
+    
+    Select Case mercados
+    Case "MD"
+        z = 0
+        Application.Workbooks(file).Worksheets(dia_s).Range("C323").value = 1
+        col = 0
+        i = 0
+    Case "MI1"
+        z = 1
+        Application.Workbooks(file).Worksheets(dia_s).Range("D323").value = 1
+        col = 1
+        i = 1
+    Case "MI2"
+        z = 2
+        Application.Workbooks(file).Worksheets(dia_s).Range("E323").value = 1
+        col = 2
+        i = 2
+    Case "MI3"
+        z = 3
+        Application.Workbooks(file).Worksheets(dia_s).Range("F323").value = 1
+        col = 3
+        i = 3
+    Case "MI4"
+        z = 4
+        Application.Workbooks(file).Worksheets(dia_s).Range("G323").value = 1
+        col = 4
+        i = 4
+    Case "MI5"
+        z = 5
+        Application.Workbooks(file).Worksheets(dia_s).Range("H323").value = 1
+        col = 5
+        i = 5
+    Case "MI6"
+        z = 6
+        Application.Workbooks(file).Worksheets(dia_s).Range("I323").value = 1
+        col = 6
+        i = 6
+    Case "MI7"
+        z = 7
+        Application.Workbooks(file).Worksheets(dia_s).Range("J323").value = 1
+        col = 7
+        i = 7
+    End Select
+    
+    zini(0) = 0
+    zini(1) = 0
+    zini(2) = 0
+    zini(3) = 0
+    zini(4) = 4
+    zini(5) = 7
+    zini(6) = 11
+    zini(7) = 15
+    
+    fil_ini(0) = 36
+    fil_ini(1) = 66
+    fil_ini(2) = 96
+    fil_ini(3) = 126
+    fil_ini(4) = 156
+    fil_ini(5) = 186
+    fil_ini(6) = 216
+    fil_ini(7) = 246
+    
+    For i = 0 To 7
+        envi(i) = Application.Workbooks(file).Worksheets(dia_s).Cells(323, 3 + i).value
+    Next i
+    If z > 0 Then
+        For i = 0 To 6
+            For j = 0 To 24
+                incremental_idn(i, j) = 0
+                incremental_pe_bruta_sol(i, j) = 0
+                incremental_pt_gnl(i, j) = 0
+                incremental_pe_bruta(i, j) = 0
+                incremental_autocon(i, j) = 0
+                incremental_gen_net1(i, j) = 0
+                incremental_cor_man(i, j) = 0
+                incremental_gen_net2(i, j) = 0
+            Next j
+        Next i
+    
+        For j = 0 To 24
+            pf_idn(j) = 0
+            pf_pe_bruta_sol(j) = 0
+            pf_pt_gnl(j) = 0
+            pf_pe_bruta(j) = 0
+            pf_autocon(j) = 0
+            pf_gen_net1(j) = 0
+            pf_cor_man(j) = 0
+            pf_gen_net2(j) = 0
+        Next j
+    
+        r_ini = 6
+        r_ini2 = 35
+    
+        For j = zini(z) To 24
+            idn(j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 3).value
+            pe_bruta_sol(j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 4).value
+            pt_gnl(j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 5).value
+            pe_bruta(j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 6).value
+            autocon(j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 7).value
+            gen_net1(j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 8).value
+            cor_man(j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 9).value
+            gen_net2(j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 10).value
+        Next j
+    
+        If z > 0 Then
+            For i = 0 To z - 1
+                If envi(i) = 1 Then
+                    For j = zini(i) To 24
+                        idn_m(i, j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(i) + j, 3).value
+                        pe_bruta_sol_m(i, j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(i) + j, 4).value
+                        pt_gnl_m(i, j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(i) + j, 5).value
+                        pe_bruta_m(i, j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(i) + j, 6).value
+                        autocon_m(i, j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(i) + j, 7).value
+                        gen_net1_m(i, j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(i) + j, 8).value
+                        cor_man_m(i, j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(i) + j, 9).value
+                        gen_net2_m(i, j) = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(i) + j, 10).value
+                    Next j
+                End If
+            Next i
+        End If
+    
+        For j = 0 To 23
+            pf_idn(j) = Application.Workbooks(file).Worksheets(dia_s).Range("C" & 276 + j).value
+            pf_pe_bruta_sol(j) = Application.Workbooks(file).Worksheets(dia_s).Range("D" & 276 + j).value
+            pf_pt_gnl(j) = Application.Workbooks(file).Worksheets(dia_s).Range("E" & 276 + j).value
+            pf_pe_bruta(j) = Application.Workbooks(file).Worksheets(dia_s).Range("F" & 276 + j).value
+            pf_autocon(j) = Application.Workbooks(file).Worksheets(dia_s).Range("G" & 276 + j).value
+            pf_gen_net1(j) = Application.Workbooks(file).Worksheets(dia_s).Range("H" & 276 + j).value
+            pf_cor_man(j) = Application.Workbooks(file).Worksheets(dia_s).Range("I" & 276 + j).value
+            pf_gen_net2(j) = Application.Workbooks(file).Worksheets(dia_s).Range("J" & 276 + j).value
+        Next j
+        x = 1
+        
+        i = z
+            Do Until i = 0
+                If z - i = 0 Then
+                    For j = zini(i) To 24
+                        incremental_idn(i, j) = Round(idn(j) - pf_idn(j), 1)
+                        incremental_pe_bruta_sol(i, j) = Round(pe_bruta_sol(j) - pf_pe_bruta_sol(j), 1)
+                        incremental_pt_gnl(i, j) = Round(pt_gnl(j) - pf_pt_gnl(j), 1)
+                        incremental_pe_bruta(i, j) = Round(pe_bruta(j) - pf_pe_bruta(j), 1)
+                        incremental_autocon(i, j) = Round(autocon(j) - pf_autocon(j), 1)
+                        incremental_gen_net1(i, j) = Round(gen_net1(j) - pf_gen_net1(j), 1)
+                        incremental_cor_man(i, j) = Round(cor_man(j) - pf_cor_man(j), 1)
+                        incremental_gen_net2(i, j) = Round(gen_net2(j) - pf_gen_net2(j), 1)
+                    Next j
+                ElseIf envi(i) = 1 Then
+volver:
+                    If envi(i - x) = 1 Then
+                        For j = zini(i) To 24
+                            incremental_idn(i, j) = Round(idn_m(i, j) - idn_m(i - x, j), 1)
+                            incremental_pe_bruta_sol(i, j) = Round(pe_bruta_sol_m(i, j) - pe_bruta_sol_m(i - x, j), 1)
+                            incremental_pt_gnl(i, j) = Round(pt_gnl_m(i, j) - pt_gnl_m(i - x, j), 1)
+                            incremental_pe_bruta(i, j) = Round(pe_bruta_m(i, j) - pe_bruta_m(i - x, j), 1)
+                            incremental_autocon(i, j) = Round(autocon_m(i, j) - autocon_m(i - x, j), 1)
+                            incremental_gen_net1(i, j) = Round(gen_net1_m(i, j) - gen_net1_m(i - x, j), 1)
+                            incremental_cor_man(i, j) = Round(cor_man_m(i, j) - cor_man_m(i - x, j), 1)
+                            incremental_gen_net2(i, j) = Round(gen_net2_m(i, j) - gen_net2_m(i - x, j), 1)
+                        Next j
+                    Else
+                        x = x + 1
+                        If i - x >= 0 Then
+                            GoTo volver:
+                        End If
+                        
+                    End If
+                End If
+                i = i - 1
+            Loop
+            
+        For j = 0 To 23
+            pf_idn(j) = Application.Workbooks(file).Worksheets(dia_s).Range("C" & 276 + j).value + incremental_idn(z, j) ' + incremental_idn(1, j) + incremental_idn(2, j) + incremental_idn(3, j) + incremental_idn(4, j) + incremental_idn(5, j) + incremental_idn(6, j)
+            pf_pe_bruta_sol(j) = Application.Workbooks(file).Worksheets(dia_s).Range("D" & 276 + j).value + incremental_pe_bruta_sol(z, j) ' + incremental_pe_bruta_sol(1, j) + incremental_pe_bruta_sol(2, j) + incremental_pe_bruta_sol(3, j) + incremental_pe_bruta_sol(4, j) + incremental_pe_bruta_sol(5, j) + incremental_pe_bruta_sol(6, j)
+            pf_pt_gnl(j) = Application.Workbooks(file).Worksheets(dia_s).Range("E" & 276 + j).value + incremental_pt_gnl(z, j) '+ incremental_pt_gnl(1, j) + incremental_pt_gnl(2, j) + incremental_pt_gnl(3, j) + incremental_pt_gnl(4, j) + incremental_pt_gnl(5, j) + incremental_pt_gnl(6, j)
+            pf_pe_bruta(j) = Application.Workbooks(file).Worksheets(dia_s).Range("F" & 276 + j).value + incremental_pe_bruta(z, j) ' + incremental_pe_bruta(1, j) + incremental_pe_bruta(2, j) + incremental_pe_bruta(3, j) + incremental_pe_bruta(4, j) + incremental_pe_bruta(5, j) + incremental_pe_bruta(6, j)
+            pf_autocon(j) = Application.Workbooks(file).Worksheets(dia_s).Range("G" & 276 + j).value + incremental_autocon(z, j) '+ incremental_autocon(1, j) + incremental_autocon(2, j) + incremental_autocon(3, j) + incremental_autocon(4, j) + incremental_autocon(5, j) + incremental_autocon(6, j)
+            pf_gen_net1(j) = Application.Workbooks(file).Worksheets(dia_s).Range("H" & 276 + j).value + incremental_gen_net1(z, j) ' + incremental_gen_net1(1, j) + incremental_gen_net1(2, j) + incremental_gen_net1(3, j) + incremental_gen_net1(4, j) + incremental_gen_net1(5, j) + incremental_gen_net1(6, j)
+            pf_cor_man(j) = Application.Workbooks(file).Worksheets(dia_s).Range("I" & 276 + j).value + incremental_cor_man(z, j) '+ incremental_cor_man(1, j) + incremental_cor_man(2, j) + incremental_cor_man(3, j) + incremental_cor_man(4, j) + incremental_cor_man(5, j) + incremental_cor_man(6, j)
+            pf_gen_net2(j) = Application.Workbooks(file).Worksheets(dia_s).Range("J" & 276 + j).value + incremental_gen_net2(z, j) ' + incremental_gen_net2(1, j) + incremental_gen_net2(2, j) + incremental_gen_net2(3, j) + incremental_gen_net2(4, j) + incremental_gen_net2(5, j) + incremental_gen_net2(6, j)
+        Next j
+        For j = 0 To 23
+            Application.Workbooks(file).Worksheets(dia_s).Range("C" & 276 + j).value = pf_idn(j)
+            Application.Workbooks(file).Worksheets(dia_s).Range("D" & 276 + j).value = pf_pe_bruta_sol(j)
+            Application.Workbooks(file).Worksheets(dia_s).Range("E" & 276 + j).value = pf_pt_gnl(j)
+            Application.Workbooks(file).Worksheets(dia_s).Range("F" & 276 + j).value = pf_pe_bruta(j)
+            Application.Workbooks(file).Worksheets(dia_s).Range("G" & 276 + j).value = pf_autocon(j)
+            Application.Workbooks(file).Worksheets(dia_s).Range("H" & 276 + j).value = pf_gen_net1(j)
+            Application.Workbooks(file).Worksheets(dia_s).Range("I" & 276 + j).value = pf_cor_man(j)
+            Application.Workbooks(file).Worksheets(dia_s).Range("J" & 276 + j).value = pf_gen_net2(j)
+        Next j
+        
+    Else
+        For j = 0 To 23
+            Application.Workbooks(file).Worksheets(dia_s).Range("C" & 276 + j).value = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 3).value
+            Application.Workbooks(file).Worksheets(dia_s).Range("D" & 276 + j).value = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 4).value
+            Application.Workbooks(file).Worksheets(dia_s).Range("E" & 276 + j).value = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 5).value
+            Application.Workbooks(file).Worksheets(dia_s).Range("F" & 276 + j).value = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 6).value
+            Application.Workbooks(file).Worksheets(dia_s).Range("G" & 276 + j).value = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 7).value
+            Application.Workbooks(file).Worksheets(dia_s).Range("H" & 276 + j).value = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 8).value
+            Application.Workbooks(file).Worksheets(dia_s).Range("I" & 276 + j).value = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 9).value
+            Application.Workbooks(file).Worksheets(dia_s).Range("J" & 276 + j).value = Application.Workbooks(file).Worksheets(dia_s).Cells(fil_ini(z) + j, 10).value
+        Next j
+    End If
+    
+    Application.Workbooks(file).Close SaveChanges:=True
+    
+Next K
+
+columna(0) = 4
+columna(1) = 16
+columna(2) = 28
+columna(3) = 40
+
+For K = 0 To kfin
+    For i = 0 To 8
+        For j = 0 To 24
+            fecha_s(K, j) = Application.Workbooks(nombre).Worksheets(hoja5).Cells(j + 6, (K * 12) + 2).value
+            program(K, i, j) = Application.Workbooks(nombre).Worksheets(hoja5).Cells(6 + j, columna(K) + i).value
+            increm(K, i, j) = Application.Workbooks(nombre).Worksheets(hoja5).Cells(35 + j, columna(K) + i).value
+        Next j
+    Next i
+Next K
+
+If planta_ribbon = "Solnova 1" Or planta_ribbon = "Solnova 3" Or planta_ribbon = "Solnova 4" Then
+    file = "Pg_Solúcar_" & mercados & ".xls"
+ElseIf planta_ribbon = "Solaben 3" Or planta_ribbon = "Solaben 2" Or planta_ribbon = "Solaben 1" Or planta_ribbon = "Solaben 6" Then
+    file = "Pg_Solaben_" & mercados & ".xls"
+ElseIf planta_ribbon = "Helioenergy 1" Or planta_ribbon = "Helioenergy 2" Then
+    file = "Pg_Écija_" & mercados & ".xls"
+ElseIf planta_ribbon = "Solacor 1" Or planta_ribbon = "Solacor 2" Then
+    file = "Pg_El Carpio_" & mercados & ".xls"
+ElseIf planta_ribbon = "Helios 1" Or planta_ribbon = "Helios 2" Then
+    file = "Pg_Helios_" & mercados & ".xls"
+ElseIf planta_ribbon = "PS10" Or planta_ribbon = "PS20" Then
+    file = "Pg_Torres_" & mercados & ".xls"
+ElseIf planta_ribbon = "Termollano" Then
+    file = "Pg_Termollano_" & mercados & ".xls"
+End If
+
+'file = "Pg_Solúcar_" & mercados & ".xls"
+ruta = "\" & año & "\"
+ruta_r = ruta & file '
+
+Workbooks.Open Filename:=ThisWorkbook.path & ruta_r, UpdateLinks:=False
+
+Application.Workbooks(file).Worksheets("hoja1").activate
+
+Application.Workbooks(file).Worksheets("hoja1").activate
+Application.Workbooks(file).Worksheets("hoja1").Range("B6:B30").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("B35:B59").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("D6:L30").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("D35:L59").Select
+Selection.ClearContents
+
+Application.Workbooks(file).Worksheets("hoja1").Range("N6:N30").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("N35:N59").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("P6:X30").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("P35:X59").Select
+Selection.ClearContents
+
+Application.Workbooks(file).Worksheets("hoja1").Range("Z6:Z30").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("Z35:Z59").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("AB6:AJ30").Select
+Selection.ClearContents
+Application.Workbooks(file).Worksheets("hoja1").Range("AB35:AJ59").Select
+Selection.ClearContents
+
+
+For K = 0 To kfin
+    For i = 0 To 8
+        For j = 0 To 24
+            Application.Workbooks(file).Worksheets("hoja1").Cells(6 + j, columna(K) - 2).value = fecha_s(K, j)
+            Application.Workbooks(file).Worksheets("hoja1").Cells(35 + j, columna(K) - 2).value = fecha_s(K, j)
+            Application.Workbooks(file).Worksheets("hoja1").Cells(6 + j, columna(K) + i).value = program(K, i, j)
+            Application.Workbooks(file).Worksheets("hoja1").Cells(35 + j, columna(K) + i).value = increm(K, i, j)
+        Next j
+    Next i
+Next K
+
+Application.Workbooks(file).Close SaveChanges:=True
+
+'dia1d = Application.Workbooks(nombre).Worksheets(hoja5).Range("C3").Value
+'dia1db = Application.Workbooks(nombre).Worksheets(hoja5).Range("C3").Value
+'dia1s = Application.Workbooks(nombre).Worksheets(hoja5).Range("C3").Value
+
+'año = Year(dia1db)
+    
+mercados = Application.Workbooks(nombre).Worksheets(hoja5).Range("B4").value
+z1 = Application.Workbooks(nombre).Worksheets(hoja8).Range("M18").value
+z2 = Application.Workbooks(nombre).Worksheets(hoja8).Range("M29").value
+z3 = Application.Workbooks(nombre).Worksheets(hoja8).Range("M40").value
+
+If planta_ribbon = "Solnova 1" Or planta_ribbon = "Solnova 3" Or planta_ribbon = "Solnova 4" Then
+
+    If z1 <> 0 Then
+        For i = 1 To z1
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 7 + i).value
+        Next i
+    Else
+'        para(1) = "maria.fleon@abengoa.com"
+
+    End If
+    
+    If z2 <> 0 Then
+        For i = 1 To z2
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 18 + i).value
+        Next i
+    Else
+        cc(1) = "jefesturno.solnova@abengoa.com"
+        cc(2) = "alvarojose.delpozo@abengoa.com"
+        cc(3) = " juan.a.garrido@abengoa.com"
+    '    cc(4) = "jose.rodriguez@abengoa.com"
+        cc(5) = "gabriel.cuadrado@abengoa.com """
+     '   cc(6) = "enrique.rodriguez.l@abengoa.com"
+        cc(7) = "alberto.delacorte@abengoa.com"
+        cc(8) = "eduardo.bejines@abengoa.com"
+        cc(9) = "Alfonso.Iglesias@abengoa.com"
+     
+    End If
+    
+     If z3 <> 0 Then
+        For i = 1 To z3
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 29 + i).value
+        Next i
+    End If
+    
+    s_plataforma = "Solúcar"
+    l_plataforma = s_plataforma
+    
+ElseIf planta_ribbon = "PS 10" Or planta_ribbon = "PS 20" Then
+    If z1 <> 0 Then
+        For i = 1 To z1
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 7 + i).value
+        Next i
+    Else
+    
+'        para(1) = "maria.fleon@abengoa.com"
+
+    End If
+    
+    If z2 <> 0 Then
+        For i = 1 To z2
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 18 + i).value
+        Next i
+    Else
+        cc(1) = "luis.luque@abengoa.com"
+        cc(2) = "jose.rodriguez.d@abengoa.com"
+        cc(3) = "jj.pimiento@abengoa.com"
+        cc(4) = "carlos.fuentes@abengoa.com"
+        cc(5) = "josem.sanchez@abengoa.com"
+
+    End If
+    
+    s_plataforma = "Torres"
+    l_plataforma = s_plataforma
+        
+ElseIf planta_ribbon = "Solaben 3" Or planta_ribbon = "Solaben 2" Or planta_ribbon = "Solaben 1" Or planta_ribbon = "Solaben 6" Then
+    If z1 <> 0 Then
+        For i = 1 To z1
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 7 + i).value
+        Next i
+    Else
+    
+'        para(1) = "maria.fleon@abengoa.com"
+
+    End If
+    
+    If z2 <> 0 Then
+        For i = 1 To z2
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 18 + i).value
+        Next i
+    Else
+        cc(1) = "operacion.solaben@abengoa.com"
+    
+
+    End If
+    
+    If z3 <> 0 Then
+        For i = 1 To z3
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 29 + i).value
+        Next i
+    End If
+    
+    s_plataforma = "Extremadura"
+    l_plataforma = "Solaben"
+    
+ElseIf planta_ribbon = "Helioenergy 1" Or planta_ribbon = "Helioenergy 2" Then
+
+    If z1 <> 0 Then
+        For i = 1 To z1
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 7 + i).value
+        Next i
+    Else
+
+'    para(4) = "german.pacheco@abengoa.com"
+'   para(1) = "maria.fleon@abengoa.com"
+    End If
+
+    If z2 <> 0 Then
+        For i = 1 To z2
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 18 + i).value
+        Next i
+    Else
+     cc(1) = "jdt.ecija@abengoa.com"
+     cc(2) = "ivan.delamesa@abengoa.com"
+
+    End If
+
+    If z3 <> 0 Then
+        For i = 1 To z3
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 29 + i).value
+        Next i
+    End If
+    
+    s_plataforma = "Écija"
+    l_plataforma = s_plataforma
+    
+ElseIf planta_ribbon = "Solacor 1" Or planta_ribbon = "Solacor 2" Then
+    
+    If z1 <> 0 Then
+        For i = 1 To z1
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 7 + i).value
+        Next i
+    Else
+
+'        para(1) = "maria.fleon@abengoa.com"
+
+    End If
+
+    If z2 <> 0 Then
+        For i = 1 To z2
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 18 + i).value
+        Next i
+    Else
+        cc(1) = "operacion.solacor@abengoa.com"
+        'cc(1) = "gustavo.arenas@abengoa.com"
+        cc(1) = "gema.luna@abengoa.com"
+    End If
+    
+    If z3 <> 0 Then
+        For i = 1 To z3
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 29 + i).value
+        Next i
+    End If
+    
+    s_plataforma = "El Carpio"
+    l_plataforma = s_plataforma
+
+
+ElseIf planta_ribbon = "Helios 1" Or planta_ribbon = "Helios 2" Then
+
+    If z1 <> 0 Then
+        For i = 1 To z1
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 7 + i).value
+        Next i
+    Else
+
+'        para(1) = "maria.fleon@solar.abengoa.com"
+    End If
+    
+    If z2 <> 0 Then
+        For i = 1 To z2
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 18 + i).value
+        Next i
+    Else
+        cc(1) = "jefesturno.helios@abengoa.com"
+      '  cc(2) = "enrique.rodriguezlopez@solar.abengoa.com"
+     '   cc(3) = "javier.perez@solar.abengoa.com"
+        cc(4) = "luis.garcianavarro@abengoa.com"
+
+    End If
+
+    If z3 <> 0 Then
+        For i = 1 To z3
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 29 + i).value
+        Next i
+    End If
+    
+    s_plataforma = "Ciudad Real"
+    l_plataforma = "Helios"
+    
+ElseIf planta_ribbon = "Termollano" Then
+    If z1 <> 0 Then
+        For i = 1 To z1
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 7 + i).value
+        Next i
+    Else
+    
+'        para(1) = "maria.fleon@abengoa.com"
+
+    End If
+    
+    If z2 <> 0 Then
+        For i = 1 To z2
+            para(i) = Application.Workbooks(nombre).Worksheets(hoja8).Range("C" & 18 + i).value
+        Next i
+    Else
+        cc(1) = "enrique.rodriguez.l@abengoa.com"
+        cc(2) = "jefesturno.termollano@abengoa.com"
+       ' cc(3) = "jj.pimiento@abengoa.com"
+       ' cc(4) = "carlos.fuentes@abengoa.com"
+       ' cc(5) = "josem.sanchez@abengoa.com"
+
+    End If
+    
+    s_plataforma = "Termollano"
+    l_plataforma = s_plataforma
+        
+
+End If
+
+Comentario_mail.Show
+'texto_variable = InputBox("¿Quiere añadir algún comentario?", "Comentario JdT", "No aplica.") 'InputBox(Title:="Comentario JdT", Default:="No aplica")
+texto_variable = texto_mail
+asunto = "Previsión de generación para el " & mercados & " del " & dia1s & " de " & s_plataforma
+
+'Entrada Manual de correos
+If Application.Workbooks(nombre).Worksheets(hoja8).Range("M2").value <> 0 Then
+    texto = Application.Workbooks(nombre).Worksheets(hoja8).Range("C2").value
+ElseIf s_plataforma = "Termollano" Then
+ texto = "Se adjunta la previsión de generación para la planta " & s_plataforma & " para el " _
+        & mercados & " del " & dia1s & Chr(13) & Chr(13) & "Comentario del JdT:" & Chr(13) & texto_variable
+Else
+    texto = "Se adjunta la previsión de generación para la plataforma de " & s_plataforma & " para el " _
+        & mercados & " del " & dia1s & Chr(13) & Chr(13) & "Comentario del JdT:" & Chr(13) & texto_variable
+End If
+
+'file = "Pg_" & l_plataforma & "_" & mercados & ".xls"
+ruta = "\" & año & "\"
+adjunto = ThisWorkbook.path & ruta & file '& ".xlsm"
+
+guardar = True
+
+'%%%%%Enviar email%%%%%%%%
+
+    Dim sesion As Outlook.Application
+    Dim mensage As Outlook.MailItem
+    Dim recipientTo As Outlook.Recipient
+    Dim recipientCC As Outlook.Recipient
+   ' Dim recipientBCC As Recipients
+
+    Set sesion = CreateObject("Outlook.Application")
+    
+    Set mensage = sesion.CreateItem(olMailItem)
+    
+
+    For t = 1 To 9
+        h1 = para(t)
+        If h1 <> "" Then
+            Set recipientTo = mensage.Recipients.Add(h1)
+            recipientTo.Type = Outlook.OlMailRecipientType.olTo
+        End If
+    Next t
+    
+    For s = 1 To 9
+        h2 = cc(s)
+        If h2 <> "" Then
+            Set recipientCC = mensage.Recipients.Add(h2)
+            recipientCC.Type = Outlook.OlMailRecipientType.olCC
+        End If
+    Next s
+
+    'recipientBCC = Recipients.Add("eugene.astafiev@somedomain.com")
+    'recipientBCC.Type = Outlook.OlMailRecipientType.olBCC
+ On Error GoTo prueba:
+    With mensage
+        .Subject = asunto
+        .Body = texto
+        .BodyFormat = olFormatHTML
+      '  .recipientTo
+       ' .recipientCC
+        .Attachments.Add adjunto
+        .Display
+        .Send
+    End With
+  '  sesion.Quit
+
+    Set sesion = Nothing
+
+   
+    
+    verificador = 1
+
+'Set sesion = CreateObject("Notes.NotesSession")
+'    usuario = sesion.UserName
+'    nombredbcorreo = Left$(usuario, 1) & Right$(usuario, (Len(usuario) - InStr(1, usuario, " "))) & ".nsf"
+'    Set dbcorreo = sesion.GETDATABASE("", nombredbcorreo)
+ '   If dbcorreo.IsOpen = True Then
+'         abierto = 1
+'     Else
+'        On Error GoTo prueba:
+'        abierto = 0
+'        dbcorreo.OPENMAIL
+'     End If
+'    Set correo = dbcorreo.CREATEDOCUMENT
+    
+'        correo.Form = "Memo"
+'        correo.sendto = para()
+'        correo.CopyTo = cc()
+'        correo.BlindCopyTo = cco()
+'        correo.Subject = asunto
+'        correo.Body = texto
+       ' 'correo.ReturnReceipt = 1
+'        correo.SAVEMESSAGEONSEND = guardar
+    
+    
+'        If adjunto <> "" Then
+'            Set adjuntar = correo.CREATERICHTEXTITEM("adjunto")
+'            Set insertar = adjuntar.EMBEDOBJECT(1454, "adjunto", adjunto, "")
+    
+'        End If
+ '       correo.PostedDate = Now()
+'        'correo.AcknowledgementofReceipt = True
+'        'correo.ReturnReceipt = True
+'        correo.Send 0, para
+        
+'        verificador = 1
+MsgBox "El mensaje de correo se ha enviado correctamente", vbOKOnly
+
+Application.ScreenUpdating = True
+Application.Calculation = xlCalculationAutomatic
+Application.DisplayAlerts = True
+
+prueba:
+If verificador = 0 Then
+    MsgBox ("No se ha enviado el email de comprobación")
+End If
+
+End Sub
+
+
+
+
